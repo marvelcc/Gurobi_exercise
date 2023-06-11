@@ -61,5 +61,3 @@ if m.Status == GRB.OPTIMAL:
         for j in facilities:
             if flow[i, j] > 0:
                 print(str(j) + " -> " + str(i) + ": " + str(flow[i, j]))
-
-
