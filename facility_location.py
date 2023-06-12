@@ -26,6 +26,7 @@ transport_cost = {('i1', 'j1'): 4,
                   ('i5', 'j3'): 4}
 
 
+
 # Create model
 m = gp.Model('FLP')
 
@@ -43,13 +44,16 @@ m.setObjective(gp.quicksum(activation_cost[j] * y[j] for j in facilities) + gp.q
 m.addConstrs(gp.quicksum(x[i, j]
              for j in facilities) == demand[i] for i in customers)
 
+
 # sum(x_ij) <= M_j * y_j
 m.addConstrs(gp.quicksum(x[i, j] for i in customers)
              <= capacity[j] * y[j] for j in facilities)
 
-# # x_ij <= d_i * y_j
+
+# x_ij <= d_i * y_j
 m.addConstrs(x[i, j] <= demand[i] * y[j]
              for i in customers for j in facilities)
+
 
 m.optimize()
 
@@ -61,3 +65,4 @@ if m.Status == GRB.OPTIMAL:
         for j in facilities:
             if flow[i, j] > 0:
                 print(str(j) + " -> " + str(i) + ": " + str(flow[i, j]))
+
