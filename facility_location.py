@@ -35,9 +35,18 @@ m = gp.Model('FLP')
 x = m.addVars(customers, facilities, vtype=GRB.INTEGER)
 y = m.addVars(facilities, vtype=GRB.BINARY)
 # Set objective function
-# factory cost (f_j * y_j) + transportation cost (c_ij * x_ij)
-m.setObjective(gp.quicksum(activation_cost[j] * y[j] for j in facilities) + gp.quicksum(
-    transport_cost[i, j] * x[i, j] for i in customers for j in facilities), GRB.MINIMIZE)
+
+
+# Set objective function
+# total cost = factory cost (f_j * y_j) + transportation cost (c_ij * x_ij)
+factory_cost = gp.quicksum(activation_cost[j] * y[j] for j in facilities)
+transport_cost = gp.quicksum(transport_cost[i, j] * x[i, j] for i in customers for j in facilities)
+
+m.setObjective(factory_cost + transport_cost, GRB.MINIMIZE)
+
+# Alternative method
+# m.setObjective(gp.quicksum(activation_cost[j] * y[j] for j in facilities) + 
+# gp.quicksum(transport_cost[i, j] * x[i, j] for i in customers for j in facilities), GRB.MINIMIZE)
 
 # Add constraints
 # sum(x_ij) == d_i
